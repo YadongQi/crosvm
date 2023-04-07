@@ -1,0 +1,18 @@
+name: CrosVM Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+      - name: Install Dependencies
+        run: |
+          Set-ExecutionPolicy Unrestricted -Scope CurrentUser
+          ./tools/install-deps.ps1
+      - name: Build
+        run: |
+          cargo build --features all-msvc64,whpx
