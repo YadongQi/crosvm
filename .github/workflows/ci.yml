@@ -1,0 +1,43 @@
+name: CrosVM Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+      - name: Install Dependencies
+        run: |
+          get-command rustc
+          rustc --version
+          cargo --version
+          Set-ExecutionPolicy Unrestricted -Scope CurrentUser
+          ./tools/install-deps.ps1
+          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+          echo $Env:PATH
+          rustc --version
+          cargo --version
+          protoc --version
+          get-command rustc
+      - name: Build
+        run: |
+          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+          get-command rustc
+          echo $Env:PATH
+          rustc --version
+          cargo --version
+          protoc --version
+          cargo build --features all-msvc64,whpx
+      - name: Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: crosvm.${{ github.run_id }}.${{ github.sha }}
+          path: |
+            target/debug/
+            !target/debug/.**
+            !target/debug/build
+            !target/debug/deps
+            !target/debug/incremental

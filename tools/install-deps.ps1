@@ -61,7 +61,7 @@ if ((Get-FileHash $RUSTUP_INIT -Algorithm SHA256).Hash -ne $RUSTUP_INIT_SHA256)
 }
 
 # Install rustup and rust toolchain
-& $RUSTUP_INIT
+& $RUSTUP_INIT -y
 
 # Update PATH to to contain cargo home directory.
 [Environment]::SetEnvironmentVariable("Path", $Env:PATH, [System.EnvironmentVariableTarget]::User)
